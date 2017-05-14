@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Titanic Visualization with Dimple</title>
+	<script src="http://d3js.org/d3.v4.min.js"></script>
+	<script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="titanic_dimple.css"/>
+
+</head>
+
+<body>
+	<div id= viz1>
+		<h2>Survival Rate Across Gender and Age Group</h2>
+		<p>Across all age groups, female's survival rates are higher than male's survival rate.</p>
+	</div>
+
+	<div id = viz2>
+		<h2>Survival Rate Across Class</h2>
+		<p>The survival rate decreases while the classes are getting from the 1st class to the 3rd class.</p>
+	</div>
+
+	<div id= viz3>
+		<h2>Survival Rate by Deck</h2>
+		<p>According to Wikipedia, Titanic has 9 decks(A-G). The rooms of upper class would be at upper decks. However, at some decks, there are rooms across classes. Following the survival rate graph above, the pie chart below shows the number of survival people by deck and by class. </p>
+		<p>At Deck D, passengers in 1st class and 2nd class have similar chance to survive. At Deck E, the survival rate in 3rd class seems even higher than upper class. Survival rate in different class doesn't vary a lot if passengers are at the same deck. So staying at upper deck might be the key to survive during the tragedy.</p>
+
+	</div>
+	
+
+
+	<script type="text/javascript">
+			
+			function demo_chart(d) {
+				var svg = dimple.newSvg("#viz1", 800, 600);
+				var filteredData = dimple.filterData(d, "Age_group", 
+									["under 18", 
+									"18-24", 
+									"25-34", 
+									"35-44", 
+									"45-54", 
+									"55-64", 
+									"Above 65"])
+		        var Chart = new dimple.chart(svg, filteredData);
+		        var x_axis = Chart.addCategoryAxis("x", "Age_group");
+		        x_axis.addOrderRule(["under 18", "18-24", 
+									"25-34", "35-44", 
+									"45-54", "55-64", 
+									"Above 65"]);
+		        var y_axis = Chart.addPctAxis("y", "PassengerId");
+		        y_axis.overrideMax = 0.5;
+		        y_axis.title = "Survival rate";
+
+		        var mySeries = Chart.addSeries(["Survived", "Sex"], 
+		        	dimple.plot.line);
+		        mySeries.aggregate = dimple.aggregateMethod.count;
+
+		        var mySeries = Chart.addSeries(["Survived", "Sex"], 
+		        	dimple.plot.bubble);
+		        mySeries.aggregate = dimple.aggregateMethod.count;
+
+
+
+		        Chart.addLegend(200, 10, 360, 20, "right");
+		        Chart.draw();
+		        
+		        // Remove the dead rate lines
+		        d3.selectAll("circle.dimple-0")
+		        	.remove();
+		        d3.select("#dimple-0-male")
+	      			.remove();
+	      		d3.select("#dimple-0-female")
+	      			.remove();
+
+	      	};
+
+	      	
+	      	function pclass_chart(d) {
+				var svg = dimple.newSvg("#viz2", 800, 600);
+		        var Chart = new dimple.chart(svg, d);
+		        var x_axis = Chart.addCategoryAxis("x", "Pclass");
+		        var y_axis = Chart.addPctAxis("y", "PassengerId");
+		        y_axis.title = "Survival rate";
+
+		        var mySeries = Chart.addSeries("Survived", dimple.plot.bar);
+		        mySeries.aggregate = dimple.aggregateMethod.count;
+		        mySeries.addOrderRule("Survived", [1,0]);
+
+		        var myLegend = Chart.addLegend(200, 10, 360, 20, "right");
+		        Chart.draw();
+
+		        // Remove the dead rate part and adjust the legend label
+		        d3.selectAll("#viz2")
+		        	.selectAll("rect.dimple-0")
+		        	.remove();
+		        d3.select("#viz2")
+		        	.select(".dimple-legend.dimple-0")
+		        	.remove();
+		        d3.select("#viz2")
+		        	.select(".dimple-legend.dimple-1")
+		        	.select("text")
+		        	.html("Survival Rate");
+
+
+
+	      	};
+
+	      	
+
+	      	function deckClass(d) {
+				var svg = dimple.newSvg("#viz3", 800, 600);
+				var filteredData = dimple.filterData(d, "Cabin_cat",
+										["G", "F", "E", "D", "C", "B", "A"]); 
+
+		        var Chart = new dimple.chart(svg, filteredData);
+		        // Chart.setBounds(80, 30, 480, 330);
+
+		        var y_axis = Chart.addCategoryAxis("y", "Cabin_cat");
+		       	y_axis.addOrderRule(["G", "F", "E", "D", "C", "B", "A"]);
+		       	y_axis.title = "Deck";
+
+
+		        var x_axis = Chart.addCategoryAxis("x", "Pclass");
+		        Chart.addMeasureAxis("p", "PassengerId");
+
+		        var pies = Chart.addSeries("Survived", dimple.plot.pie);
+		        pies.radius = 30;
+		        pies.aggregate = dimple.aggregateMethod.count;
+
+		        Chart.addLegend(500, 10, 60, 50, "right");
+		        Chart.draw();
+
+		        // Customize fill color for my pie charts to highlight the survival numbers, what I am focusing
+		        d3.select("#viz3")
+		        	.select(".dimple-legend.dimple-1")
+		        	.select("text")
+		        	.html("Survived");
+		        d3.select("#viz3")
+		        	.select(".dimple-legend.dimple-0")
+		        	.select("text")
+		        	.html("Dead");
+		        d3.select("#viz3")
+		        	.selectAll(".dimple-pie.dimple-0")
+		        	.style("fill", "#bfbfbf")
+		        	.style("stroke", "#bfbfbf");
+		        d3.select("#viz3")
+		        	.select("rect.dimple-0")
+		        	.style("fill", "#bfbfbf")
+		        	.style("stroke", "#bfbfbf");
+
+
+		        // Grouping elements at the same decks and assign mouse over events
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-1-e--")
+		        	.classed("groupE", true);
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-2-e--")
+		        	.classed("groupE", true);
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-3-e--")
+		        	.classed("groupE", true);
+
+		        d3.selectAll(".groupE")
+		        	.on("mouseover", 
+		        		function(d) {d3.selectAll(".groupE").style("fill", "orange");})
+		        	.on("mouseout", function(d) {d3.selectAll(".groupE").style("fill", "#80b1d3");});
+
+
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-1-d--")
+		        	.classed("groupD", true);
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-2-d--")
+		        	.classed("groupD", true);
+		        
+
+		        d3.selectAll(".groupD")
+		        	.on("mouseover", 
+		        		function(d) {d3.selectAll(".groupD").style("fill", "orange");})
+		        	.on("mouseout", function(d) {d3.selectAll(".groupD").style("fill", "#80b1d3");});
+
+
+		       
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-2-f--")
+		        	.classed("groupF", true);
+		        d3.select("#viz3")
+		        	.selectAll("#dimple-1-3-f--")
+		        	.classed("groupF", true);
+
+		        d3.selectAll(".groupF")
+		        	.on("mouseover", 
+		        		function(d) {d3.selectAll(".groupF").style("fill", "orange");})
+		        	.on("mouseout", function(d) {d3.selectAll(".groupF").style("fill", "#80b1d3");});
+
+	      	};
+
+
+
+		d3.csv("enriched_data.csv", function(data){
+			console.log(data.columns);
+			console.log(data[0]);
+			demo_chart(data);
+			pclass_chart(data);
+			deckClass(data);
+			
+			});
+
+
+	</script>
+
+
+
+</body>
+</html>

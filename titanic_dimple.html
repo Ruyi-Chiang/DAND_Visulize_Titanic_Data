@@ -4,12 +4,6 @@
 	<title>Titanic Visualization with Dimple</title>
 	<script src="http://d3js.org/d3.v4.min.js"></script>
 	<script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
-	<style type="text/css">
-		#dimple-0-male{
-			stroke-width: 0;
-		}
-
-	</style>
 	<link rel="stylesheet" type="text/css" href="titanic_dimple.css"/>
 
 </head>
@@ -69,6 +63,7 @@
 		        Chart.addLegend(200, 10, 360, 20, "right");
 		        Chart.draw();
 		        
+		        // Remove the dead rate lines
 		        d3.selectAll("circle.dimple-0")
 		        	.remove();
 		        d3.select("#dimple-0-male")
@@ -93,7 +88,7 @@
 		        var myLegend = Chart.addLegend(200, 10, 360, 20, "right");
 		        Chart.draw();
 
-		        
+		        // Remove the dead rate part and adjust the legend label
 		        d3.selectAll("#viz2")
 		        	.selectAll("rect.dimple-0")
 		        	.remove();
@@ -134,6 +129,7 @@
 		        Chart.addLegend(500, 10, 60, 50, "right");
 		        Chart.draw();
 
+		        // Customize fill color for my pie charts to highlight the survival numbers, what I am focusing
 		        d3.select("#viz3")
 		        	.select(".dimple-legend.dimple-1")
 		        	.select("text")
@@ -151,6 +147,8 @@
 		        	.style("fill", "#bfbfbf")
 		        	.style("stroke", "#bfbfbf");
 
+
+		        // Grouping elements at the same decks and assign mouse over events
 		        d3.select("#viz3")
 		        	.selectAll("#dimple-1-1-e--")
 		        	.classed("groupE", true);

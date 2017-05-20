@@ -11,15 +11,19 @@
 <body>
 	<div id= viz1>
 		<h2>Survival Rate Across Gender and Age Group</h2>
+		<p>Across all age groups, female's survival rates are higher than male's survival rate.</p>
 	</div>
 
 	<div id = viz2>
 		<h2>Survival Rate Across Class</h2>
+		<p>The survival rate decreases while the classes are getting from the 1st class to the 3rd class.</p>
 	</div>
 
 	<div id= viz3>
 		<h2>Survival Rate by Deck</h2>
-		
+		<p>According to Wikipedia, Titanic has 9 decks(A-G). The rooms of upper class would be at upper decks. However, at some decks, there are rooms across classes. Following the survival rate graph above, the pie chart below shows the number of survival people by deck and by class. </p>
+		<p>At Deck D, passengers in 1st class and 2nd class have similar chance to survive. At Deck E, the survival rate in 3rd class seems even higher than upper class. Survival rate in different class doesn't vary a lot if passengers are at the same deck. So staying at upper deck might be the key to survive during the tragedy.</p>
+
 	</div>
 	
 
@@ -59,6 +63,7 @@
 		        Chart.addLegend(200, 10, 360, 20, "right");
 		        Chart.draw();
 		        
+		        // Remove the dead rate lines
 		        d3.selectAll("circle.dimple-0")
 		        	.remove();
 		        d3.select("#dimple-0-male")
@@ -83,6 +88,7 @@
 		        var myLegend = Chart.addLegend(200, 10, 360, 20, "right");
 		        Chart.draw();
 
+		        // Remove the dead rate part and adjust the legend label
 		        d3.selectAll("#viz2")
 		        	.selectAll("rect.dimple-0")
 		        	.remove();
@@ -106,6 +112,7 @@
 										["G", "F", "E", "D", "C", "B", "A"]); 
 
 		        var Chart = new dimple.chart(svg, filteredData);
+		        // Chart.setBounds(80, 30, 480, 330);
 
 		        var y_axis = Chart.addCategoryAxis("y", "Cabin_cat");
 		       	y_axis.addOrderRule(["G", "F", "E", "D", "C", "B", "A"]);
@@ -122,6 +129,7 @@
 		        Chart.addLegend(500, 10, 60, 50, "right");
 		        Chart.draw();
 
+		        // Customize fill color for my pie charts to highlight the survival numbers, what I am focusing
 		        d3.select("#viz3")
 		        	.select(".dimple-legend.dimple-1")
 		        	.select("text")
@@ -140,6 +148,7 @@
 		        	.style("stroke", "#bfbfbf");
 
 
+		        // Grouping elements at the same decks and assign mouse over events
 		        d3.select("#viz3")
 		        	.selectAll("#dimple-1-1-e--")
 		        	.classed("groupE", true);
